@@ -1,3 +1,4 @@
+import { gitCommit, gitTag } from '../git'
 import { ExitCode } from '../utils/constant'
 import { parseArgs } from '../utils/parse-arg'
 import { versionBump } from '../version-bump'
@@ -12,9 +13,13 @@ export async function main() {
     if (help || version)
       process.exit(ExitCode.Success)
 
-    versionBump(option)
+    const newVersion = await versionBump(option)
 
-    // version bump
+    if (option.commit)
+      gitCommit(newVersion)
+
+    if (option.tag)
+      gitTag(newVersion)
   }
   catch (e) {
 

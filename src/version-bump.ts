@@ -1,7 +1,7 @@
 import { inc, valid as validVersion } from 'semver'
 import c from 'picocolors'
 import prompts from 'prompts'
-import { readJSONFile } from './fs'
+import { readJSONFile, writeJSONFile } from './fs'
 import type { ConfigOption } from './types'
 import { ExitCode, releaseType } from './utils/constant'
 
@@ -52,6 +52,20 @@ function getNextVersion(oldVersion: string) {
   return next
 }
 
+async function updateFile(file: string, version: string) {
+  const name = file.trim().toLowerCase()
+  const content = await readJSONFile(name)
+
+  if (content && content.version !== version) {
+    content.version = version
+    await writeJSONFile(file, content)
+  }
+}
+
+async function updateFiles(cwd: string, files: string[], version: string) {
+  Promise.all(files.map(async file => await updateFile(`${cwd}/${file}`, version)))
+}
+
 async function promptForNewVersion(oldVersion: string): Promise<string> {
   const next = getNextVersion(oldVersion)
 
@@ -92,12 +106,17 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
   console.log(newVersion)
   return newVersion
 }
-export async function versionBump(option: ConfigOption) {
+
+export async function versionBump(option: ConfigOption): Promise<string> {
   const cwd = process.cwd()
+  const files = getFiles(!!option.recursive)
   // get the old and new version
-  const oldVersion = await getOldVersion(cwd, getFiles(!!option.recursive))
+  const oldVersion = await getOldVersion(cwd, files)
 
   const newVersion = await promptForNewVersion(oldVersion)
 
   // update the npm version in files
+  await updateFiles(cwd, files, newVersion)
+
+  return newVersion
 }
