@@ -3,8 +3,6 @@
     "module": "ESNext",
     "target": "es2017",
     "strict": true,
-    "lib": ["DOM", "ESNext"],
-    "jsx": "preserve",
     "esModuleInterop": true,
     "incremental": true,
     "skipLibCheck": true,
@@ -19,12 +17,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "types": [
-      "vitest",
-      "vite/client",
-      "vue/ref-macros",
-      "unplugin-vue-router/client"
-    ]
   },
-  "include": ["src", "test"]
+  "include": [
+    "src"
+  ]
 }
