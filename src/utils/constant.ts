@@ -6,6 +6,6 @@ export enum ExitCode {
   InvalidArguments = 2,
 }
 
-export const preReleaseType: ReleaseType[] = ['premajor', 'preminor', 'prerelease']
+export const preReleaseType: ReleaseType[] = ['premajor', 'preminor', 'prerelease', 'prepatch']
 
 export const releaseType: ReleaseType[] = preReleaseType.concat(['major', 'minor', 'patch'])

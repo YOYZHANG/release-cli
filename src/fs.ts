@@ -4,7 +4,7 @@ interface PackageJSON {
   version: string
 }
 export async function writeJSONFile(filePath: string, content: any) {
-  const jsonString = JSON.stringify(content)
+  const jsonString = JSON.stringify(content, null, 2)
   await writeFile(filePath, jsonString)
 }
 export async function readJSONFile(path: string): Promise<PackageJSON | null> {

@@ -1,4 +1,4 @@
-import { inc, valid as validVersion } from 'semver'
+import { inc, parse as parseVersion, valid as validVersion } from 'semver'
 import c from 'picocolors'
 import prompts from 'prompts'
 import { readJSONFile, writeJSONFile } from './fs'
@@ -23,7 +23,7 @@ async function getOldVersion(cwd: string, files: string[]): Promise<string> {
       return version
   }
 
-  process.exit(ExitCode.FatalError)
+  throw new Error('no version in current files')
 }
 
 function getFiles(recursive: boolean): string[] {
@@ -42,13 +42,24 @@ function getFiles(recursive: boolean): string[] {
 
 function getNextVersion(oldVersion: string) {
   const next: Record<string, string> = {}
+  let preid = 'beta'
 
-  // const parsed = parseVersion(oldVersion)
-  for (const type of releaseType) {
-    next[type] = inc(oldVersion, type)!
-    console.log(next)
-  }
+  const parsed = parseVersion(oldVersion)
 
+  if (typeof parsed?.prerelease[0] === 'string')
+    preid = parsed?.prerelease[0]
+
+  for (const type of releaseType)
+    next[type] = inc(oldVersion, type, preid)!
+
+  // eslint-disable-next-line dot-notation
+  next['next'] = parsed?.prerelease.length
+    // eslint-disable-next-line dot-notation
+    ? next['prepatch']!
+    // eslint-disable-next-line dot-notation
+    : next['patch']!
+
+  console.log(next)
   return next
 }
 
@@ -80,25 +91,33 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
       initial: 'next',
       choices: [
         // eslint-disable-next-line dot-notation
-        { title: prettier('major', next['major']!) },
+        { title: prettier('major', next['major']!), value: next['major'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('minor', next['minor']!) },
+        { title: prettier('minor', next['minor']!), value: next['minor'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('patch', next['patch']!) },
+        { title: prettier('patch', next['patch']!), value: next['patch'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('next', next['next']!) },
+        { title: prettier('next', next['next']!), value: next['next'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('prepatch', next['prepatch']!) },
+        { title: prettier('prepatch', next['prepatch']!), value: next['prepatch'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('preminor', next['preminor']!) },
+        { title: prettier('preminor', next['preminor']!), value: next['preminor'] },
         // eslint-disable-next-line dot-notation
-        { title: prettier('premajor', next['premajor']!) },
-        { title: prettier('custom', '') },
+        { title: prettier('premajor', next['premajor']!), value: next['premajor'] },
+        { title: prettier('custom', ''), value: 'custom' },
       ],
     },
-  ])
+    {
+      type: prev => prev === 'custom' ? 'text' : null,
+      name: 'custom',
+      message: 'custom value',
+      initial: oldVersion,
+      validate: (custom: string) => validVersion(custom) ? true : 'not a valid version',
 
-  const newVersion = response.value
+    },
+  ])
+  console.log(response, 'response answers')
+  const newVersion = response.value === 'custom' ? response.custom : response.value
 
   if (!newVersion)
     process.exit(ExitCode.FatalError)
