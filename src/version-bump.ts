@@ -59,7 +59,6 @@ function getNextVersion(oldVersion: string) {
     // eslint-disable-next-line dot-notation
     : next['patch']!
 
-  console.log(next)
   return next
 }
 
@@ -128,13 +127,21 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
 
     },
   ])
-  console.log(response, 'response answers')
   const newVersion = response.value === 'custom' ? response.custom : response.value
 
   if (!newVersion)
     process.exit(ExitCode.FatalError)
 
-  console.log(newVersion)
+  const confirm = await prompts({
+    name: 'yes',
+    type: 'confirm',
+    message: 'Bump?',
+    initial: true,
+  })
+
+  if (!confirm.yes)
+    process.exit(ExitCode.FatalError)
+
   return newVersion
 }
 
