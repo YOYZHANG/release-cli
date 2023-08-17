@@ -6,5 +6,5 @@ export function gitCommit(newVersion: string) {
 }
 
 export function gitTag(newVersion: string) {
-  execSync(`git tag --annotate --message "release v${newVersion}"`)
+  execSync(`git tag --annotate v${newVersion} --message "release v${newVersion}"`)
 }
