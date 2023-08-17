@@ -6,10 +6,10 @@ import type { ConfigOption } from './types'
 import { ExitCode, releaseType } from './utils/constant'
 
 async function readVersion(cwd: string, filePath: string): Promise<string | undefined> {
-  const content = await readJSONFile(`${cwd}/${filePath}`)
+  const result = await readJSONFile(`${cwd}/${filePath}`)
 
-  if (content && validVersion(content.version))
-    return content.version
+  if (result?.data && validVersion(result?.data.version))
+    return result?.data.version
 
   return undefined
 }
@@ -65,11 +65,21 @@ function getNextVersion(oldVersion: string) {
 
 async function updateFile(file: string, version: string) {
   const name = file.trim().toLowerCase()
-  const content = await readJSONFile(name)
+  const result = await readJSONFile(name)
 
-  if (content && content.version !== version) {
-    content.version = version
-    await writeJSONFile(file, content)
+  if (!result)
+    return
+
+  const { data, indent, newline } = result
+
+  if (data && data.version !== version) {
+    data.version = version
+    let jsonString = JSON.stringify(data, null, indent)
+
+    if (newline)
+      jsonString += newline
+
+    await writeJSONFile(file, jsonString)
   }
 }
 
