@@ -2,9 +2,10 @@ import { loadConfig } from 'c12'
 import type { ConfigOption } from './types'
 
 export const releaseConfigDefaults: ConfigOption = {
-  commit: true,
+  commit: false,
   tag: false,
   recursive: false,
+  push: false,
 }
 
 export async function loadRealseConfig(overrides?: Partial<ConfigOption>, cwd = process.cwd()): Promise<Partial<ConfigOption>> {

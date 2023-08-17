@@ -1,4 +1,4 @@
-import { gitCommit, gitTag } from '../git'
+import { gitCommit, gitPush, gitTag } from '../git'
 import { ExitCode } from '../utils/constant'
 import { parseArgs } from '../utils/parse-arg'
 import { versionBump } from '../version-bump'
@@ -20,6 +20,9 @@ export async function main() {
 
     if (option.tag)
       gitTag(newVersion)
+
+    if (option.push)
+      gitPush(!!option.tag)
   }
   catch (e) {
 

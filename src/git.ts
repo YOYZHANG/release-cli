@@ -8,3 +8,10 @@ export function gitCommit(newVersion: string) {
 export function gitTag(newVersion: string) {
   execSync(`git tag --annotate v${newVersion} --message "release v${newVersion}"`)
 }
+
+export function gitPush(hasTag: boolean) {
+  execSync('git push')
+
+  if (hasTag)
+    execSync('git push --tags')
+}

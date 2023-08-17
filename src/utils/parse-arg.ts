@@ -10,12 +10,11 @@ export async function parseArgs() {
       .version(version)
       .option('-c, --commit [msg]', `Commit message (default: ${releaseConfigDefaults.commit})`)
       .option('-t, --tag [tag]', `Tag name (default: ${releaseConfigDefaults.tag})`)
+      .option('-p, --push [tag]', `Push commits (default: ${releaseConfigDefaults.push})`)
       .option('-r, --recursive', `recursively modify file package.json (default: ${releaseConfigDefaults.recursive})`)
       .help()
 
     const result = cli.parse()
-
-    console.log(result.args, 'result.args')
 
     const options = result.options as any
 
@@ -25,6 +24,7 @@ export async function parseArgs() {
       option: await loadRealseConfig({
         commit: options.commit,
         tag: options.tag,
+        push: options.push,
         recursive: options.recursive,
       }),
     }
