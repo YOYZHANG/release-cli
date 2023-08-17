@@ -111,6 +111,8 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
         // eslint-disable-next-line dot-notation
         { title: prettier('prepatch', next['prepatch']!), value: next['prepatch'] },
         // eslint-disable-next-line dot-notation
+        { title: prettier('prerelease', next['prerelease']!), value: next['prerelease'] },
+        // eslint-disable-next-line dot-notation
         { title: prettier('preminor', next['preminor']!), value: next['preminor'] },
         // eslint-disable-next-line dot-notation
         { title: prettier('premajor', next['premajor']!), value: next['premajor'] },

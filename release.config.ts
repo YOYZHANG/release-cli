@@ -1,5 +1,5 @@
 import { defineConfig } from './src'
 
 export default defineConfig({
-  commit: false,
+  commit: true,
 })
