@@ -29,6 +29,7 @@
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
     "rele": "tsx src/cli/run.ts",
+    "changelog": "standard-changelog",
     "release": "npm run rele && npm publish --access public"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "@types/semver": "^7.5.0",
     "eslint": "^8.42.0",
     "pnpm": "^8.6.12",
+    "standard-changelog": "^3.0.0",
     "tsup": "^7.2.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.3"
