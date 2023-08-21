@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
     "release": "tsx src/cli/run.ts",
-    "publish": "npm run release && npm publish"
+    "publish": "npm run release && npm publish --access public"
   },
   "dependencies": {
     "c12": "^1.4.2",

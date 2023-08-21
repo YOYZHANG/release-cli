@@ -84,10 +84,36 @@ async function updateFile(file: string, version: string) {
 }
 
 async function updateFiles(cwd: string, files: string[], version: string) {
-  Promise.all(files.map(async file => await updateFile(`${cwd}/${file}`, version)))
+  await Promise.all(files.map(async file => await updateFile(`${cwd}/${file}`, version)))
 }
 
-async function promptForNewVersion(oldVersion: string): Promise<string> {
+function printSummary(option: ConfigOption, files: string[], oldVersion: string, newVersion: string) {
+  // eslint-disable-next-line no-console
+  console.info()
+  // eslint-disable-next-line no-console
+  console.info(`files ${files.map(i => c.bold(i)).join('\n')}`)
+
+  if (option.commit)
+    // eslint-disable-next-line no-console
+    console.info(`commit ${c.bold(`git commit --all --message chore: release v${newVersion}`)}`)
+
+  if (option.tag)
+    // eslint-disable-next-line no-console
+    console.info(`tag ${c.bold(`git tag --annotate v --message release v${newVersion}`)}`)
+
+  if (option.push)
+    // eslint-disable-next-line no-console
+    console.info(`push ${c.cyan(c.bold('yes'))}`)
+
+  // eslint-disable-next-line no-console
+  console.info()
+  // eslint-disable-next-line no-console
+  console.info(`from ${c.bold(oldVersion)}`)
+  // eslint-disable-next-line no-console
+  console.info(`to ${c.bold(newVersion)}`)
+}
+
+async function promptForNewVersion(oldVersion: string, printS: (version: string) => void): Promise<string> {
   const next = getNextVersion(oldVersion)
 
   const prettier = (str: string, version: string) =>
@@ -133,6 +159,8 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
   if (!newVersion)
     process.exit(ExitCode.FatalError)
 
+  printS(newVersion)
+
   const confirm = await prompts({
     name: 'yes',
     type: 'confirm',
@@ -152,7 +180,8 @@ export async function versionBump(option: ConfigOption): Promise<string> {
   // get the old and new version
   const oldVersion = await getOldVersion(cwd, files)
 
-  const newVersion = await promptForNewVersion(oldVersion)
+  const printS = (newVersion: string) => printSummary(option, files, oldVersion, newVersion)
+  const newVersion = await promptForNewVersion(oldVersion, printS)
 
   // update the npm version in files
   await updateFiles(cwd, files, newVersion)
