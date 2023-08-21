@@ -1,6 +1,7 @@
 import { inc, parse as parseVersion, valid as validVersion } from 'semver'
 import c from 'picocolors'
 import prompts from 'prompts'
+import fg from 'fast-glob'
 import { readJSONFile, writeJSONFile } from './fs'
 import type { ConfigOption } from './types'
 import { ExitCode, releaseType } from './utils/constant'
@@ -26,12 +27,12 @@ async function getOldVersion(cwd: string, files: string[]): Promise<string> {
   throw new Error('no version in current files')
 }
 
-function getFiles(recursive: boolean): string[] {
+async function getFiles(recursive: boolean): Promise<string[]> {
   if (recursive) {
-    return [
+    return await fg([
       'package.json',
       'packages/**/package.json',
-    ]
+    ])
   }
   else {
     return [
@@ -147,7 +148,7 @@ async function promptForNewVersion(oldVersion: string): Promise<string> {
 
 export async function versionBump(option: ConfigOption): Promise<string> {
   const cwd = process.cwd()
-  const files = getFiles(!!option.recursive)
+  const files = await getFiles(!!option.recursive)
   // get the old and new version
   const oldVersion = await getOldVersion(cwd, files)
 
