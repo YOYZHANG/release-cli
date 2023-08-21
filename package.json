@@ -1,7 +1,6 @@
 {
-  "name": "release-cli",
-  "version": "1.0.2",
-  "private": true,
+  "name": "@fycosmo/release-cli",
+  "version": "1.0.0",
   "packageManager": "pnpm@8.6.12",
   "license": "MIT",
   "exports": {
@@ -26,12 +25,12 @@
   },
   "scripts": {
     "dev": "npm run build --watch",
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts src/cli/index.ts --format esm,cjs --dts --clean",
     "start": "tsx src/cli/run.ts",
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
-    "release": "",
-    "publish": "npm run release && npm publish"
+    "release": "tsx src/cli/run.ts",
+    "publish": "npm run release && npm publish --access public"
   },
   "dependencies": {
     "c12": "^1.4.2",
@@ -50,6 +49,7 @@
     "@types/semver": "^7.5.0",
     "eslint": "^8.42.0",
     "pnpm": "^8.6.12",
+    "tsup": "^7.2.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.3"
   }
