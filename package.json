@@ -1,6 +1,6 @@
 {
   "name": "@fycosmo/release-cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "packageManager": "pnpm@8.6.12",
   "license": "MIT",
   "exports": {
@@ -14,7 +14,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "release": "./bin/release.js"
+    "rele": "./bin/release.js"
   },
   "files": [
     "dist",
@@ -26,11 +26,10 @@
   "scripts": {
     "dev": "npm run build --watch",
     "build": "tsup src/index.ts src/cli/index.ts --format esm,cjs --dts --clean",
-    "start": "tsx src/cli/run.ts",
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
-    "release": "tsx src/cli/run.ts",
-    "publish": "npm run release && npm publish --access public"
+    "rele": "tsx src/cli/run.ts",
+    "release": "npm run rele && npm publish --access public"
   },
   "dependencies": {
     "c12": "^1.4.2",
